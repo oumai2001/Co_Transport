@@ -8,80 +8,101 @@ use Illuminate\Support\Facades\Auth;
 
 class VehiculeController extends Controller
 {
-    public function __construct()
+     
+    // Liste des véhicules du conducteur connecté
+    public function index(Request $request)
     {
-        $this->middleware('auth');
-        $this->middleware('role:conducteur');
-    }
-    
-    // Liste des véhicules
-    public function index()
-    {
-        $vehicules = Auth::user()->conducteur->vehicules;
-        return view('vehicules.index', compact('vehicules'));
-    }
-    
-    // Formulaire d'ajout
-    public function create()
-    {
-        return view('vehicules.create');
+        $user = $request->user();
+        
+        if ($user->type != 'conducteur') {
+            return response()->json(['message' => 'Non autorisé'], 403);
+        }
+        
+        $vehicules = $user->conducteur->vehicules;
+        
+        return response()->json($vehicules);
     }
     
     // Ajouter un véhicule
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $user = $request->user();
+        
+        if ($user->type != 'conducteur') {
+            return response()->json(['message' => 'Non autorisé'], 403);
+        }
+        
+        $request->validate([
             'immatriculation' => 'required|unique:vehicules',
-            'marque' => 'required|string',
-            'modele' => 'required|string',
-            'capacite' => 'required|integer|min:1',
-            'annee' => 'nullable|integer|min:1900',
-            'couleur' => 'nullable|string',
-        ]);
-        
-        $conducteur = Auth::user()->conducteur;
-        
-        $vehicule = $conducteur->vehicules()->create($data);
-        
-        return redirect()->route('vehicules.index')
-                         ->with('success', 'Véhicule ajouté avec succès');
-    }
-    
-    // Modifier un véhicule
-    public function edit(Vehicule $vehicule)
-    {
-        $this->authorize('update', $vehicule);
-        
-        return view('vehicules.edit', compact('vehicule'));
-    }
-    
-    // Mettre à jour
-    public function update(Request $request, Vehicule $vehicule)
-    {
-        $this->authorize('update', $vehicule);
-        
-        $data = $request->validate([
             'marque' => 'required|string',
             'modele' => 'required|string',
             'capacite' => 'required|integer|min:1',
             'annee' => 'nullable|integer',
             'couleur' => 'nullable|string',
+            'statut' => 'nullable|in:disponible,maintenance,en trajet'
         ]);
         
-        $vehicule->update($data);
+        $conducteur = $user->conducteur;
         
-        return redirect()->route('vehicules.index')
-                         ->with('success', 'Véhicule modifié');
+        $vehicule = $conducteur->vehicules()->create([
+            'immatriculation' => $request->immatriculation,
+            'marque' => $request->marque,
+            'modele' => $request->modele,
+            'capacite' => $request->capacite,
+            'annee' => $request->annee,
+            'couleur' => $request->couleur,
+            'statut' => $request->statut ?? 'disponible'
+        ]);
+        
+        return response()->json($vehicule, 201);
     }
     
-    // Supprimer
-    public function destroy(Vehicule $vehicule)
+    // Modifier un véhicule
+    public function update(Request $request, $id)
     {
-        $this->authorize('delete', $vehicule);
+        $user = $request->user();
+        
+        if ($user->type != 'conducteur') {
+            return response()->json(['message' => 'Non autorisé'], 403);
+        }
+        
+        $vehicule = Vehicule::findOrFail($id);
+        
+        if ($vehicule->conducteur_id != $user->conducteur->id) {
+            return response()->json(['message' => 'Non autorisé'], 403);
+        }
+        
+        $request->validate([
+            'marque' => 'sometimes|string',
+            'modele' => 'sometimes|string',
+            'capacite' => 'sometimes|integer|min:1',
+            'annee' => 'nullable|integer',
+            'couleur' => 'nullable|string',
+            'statut' => 'nullable|in:disponible,maintenance,en trajet'
+        ]);
+        
+        $vehicule->update($request->only(['marque', 'modele', 'capacite', 'annee', 'couleur', 'statut']));
+        
+        return response()->json($vehicule);
+    }
+    
+    // Supprimer un véhicule
+    public function destroy($id, Request $request)
+    {
+        $user = $request->user();
+        
+        if ($user->type != 'conducteur') {
+            return response()->json(['message' => 'Non autorisé'], 403);
+        }
+        
+        $vehicule = Vehicule::findOrFail($id);
+        
+        if ($vehicule->conducteur_id != $user->conducteur->id) {
+            return response()->json(['message' => 'Non autorisé'], 403);
+        }
         
         $vehicule->delete();
         
-        return redirect()->route('vehicules.index')
-                         ->with('success', 'Véhicule supprimé');
+        return response()->json(['message' => 'Véhicule supprimé avec succès']);
     }
 }

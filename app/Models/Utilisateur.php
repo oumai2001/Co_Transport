@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\HasApiTokens;  // ← Ajouter cette ligne
 
 class Utilisateur extends Model
 {
+    use HasApiTokens;  // ← Ajouter cette ligne
+    
     protected $table = 'utilisateurs';
     
     protected $fillable = [
@@ -26,13 +28,12 @@ class Utilisateur extends Model
     
     protected $casts = [
         'date_inscription' => 'date',
-        'email_verified_at' => 'datetime',
     ];
     
     // Mutateur pour hacher le mot de passe
     public function setMotDePasseAttribute($value)
     {
-        $this->attributes['mot_de_passe'] = Hash::make($value);
+        $this->attributes['mot_de_passe'] = bcrypt($value);
     }
     
     // Relations
@@ -65,11 +66,5 @@ class Utilisateur extends Model
     public function isAdmin()
     {
         return $this->type === 'admin';
-    }
-    
-    // Vérifier si le compte est actif
-    public function isActif()
-    {
-        return $this->statut_compte === 'actif';
     }
 }

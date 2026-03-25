@@ -5,58 +5,75 @@ namespace App\Http\Controllers;
 use App\Models\Trajet;
 use App\Models\Favori;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class FavoriController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-        $this->middleware('role:passager');
-    }
-    
     // Ajouter un favori
-    public function store(Trajet $trajet)
+    public function store($trajet_id, Request $request)
     {
-        $passager = Auth::user()->passager;
+        $user = $request->user();
         
+        if ($user->type != 'passager') {
+            return response()->json(['message' => 'Seuls les passagers peuvent ajouter des favoris'], 403);
+        }
+
+        $trajet = Trajet::findOrFail($trajet_id);
+        $passager = $user->passager;
+
         // Vérifier si déjà favori
         $existant = Favori::where('passager_id', $passager->id)
-                         ->where('trajet_id', $trajet->id)
+                         ->where('trajet_id', $trajet_id)
                          ->first();
-        
+
         if ($existant) {
-            return back()->with('info', 'Déjà dans vos favoris');
+            return response()->json(['message' => 'Déjà dans vos favoris'], 400);
         }
-        
-        Favori::create([
+
+        $favori = Favori::create([
             'passager_id' => $passager->id,
-            'trajet_id' => $trajet->id
+            'trajet_id' => $trajet_id
         ]);
-        
-        return back()->with('success', 'Ajouté aux favoris');
+
+        return response()->json([
+            'message' => 'Favori ajouté',
+            'favori' => $favori
+        ], 201);
     }
-    
+
     // Supprimer un favori
-    public function destroy(Favori $favori)
+    public function destroy($id, Request $request)
     {
-        $this->authorize('delete', $favori);
+        $user = $request->user();
         
+        if ($user->type != 'passager') {
+            return response()->json(['message' => 'Non autorisé'], 403);
+        }
+
+        $favori = Favori::findOrFail($id);
+        
+        if ($favori->passager_id != $user->passager->id) {
+            return response()->json(['message' => 'Non autorisé'], 403);
+        }
+
         $favori->delete();
-        
-        return back()->with('success', 'Retiré des favoris');
+
+        return response()->json(['message' => 'Favori supprimé']);
     }
-    
-    // Liste des favoris
-    public function index()
+
+    // Mes favoris
+    public function index(Request $request)
     {
-        $passager = Auth::user()->passager;
+        $user = $request->user();
         
-        $favoris = $passager->favoris()
-                           ->with('trajet.villeDepart', 'trajet.villeArrivee')
-                           ->orderBy('created_at', 'desc')
-                           ->get();
-        
-        return view('passager.favoris', compact('favoris'));
+        if ($user->type != 'passager') {
+            return response()->json(['message' => 'Non autorisé'], 403);
+        }
+
+        $favoris = $user->passager->favoris()
+                                  ->with('trajet.villeDepart', 'trajet.villeArrivee')
+                                  ->orderBy('created_at', 'desc')
+                                  ->get();
+
+        return response()->json($favoris);
     }
 }

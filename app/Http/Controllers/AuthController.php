@@ -6,53 +6,15 @@ use App\Models\Utilisateur;
 use App\Models\Passager;
 use App\Models\Conducteur;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    // Afficher formulaire de connexion
-    public function showLogin()
-    {
-        return view('auth.login');
-    }
-    
-    // Traiter la connexion
-    public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'mot_de_passe' => 'required'
-        ]);
-        
-        $user = Utilisateur::where('email', $request->email)->first();
-        
-        if ($user && Hash::check($request->mot_de_passe, $user->mot_de_passe)) {
-            Auth::login($user);
-            
-            // Rediriger selon le rôle
-            if ($user->isAdmin()) {
-                return redirect()->route('admin.dashboard');
-            } elseif ($user->isConducteur()) {
-                return redirect()->route('conducteur.dashboard');
-            } else {
-                return redirect()->route('passager.dashboard');
-            }
-        }
-        
-        return back()->withErrors(['email' => 'Email ou mot de passe incorrect']);
-    }
-    
-    // Afficher formulaire d'inscription
-    public function showRegister()
-    {
-        return view('auth.register');
-    }
-    
-    // Traiter l'inscription
+    // API Register
     public function register(Request $request)
     {
-        $data = $request->validate([
+        // Valider les données
+        $validator = validator($request->all(), [
             'nom' => 'required|string|max:255',
             'email' => 'required|email|unique:utilisateurs,email',
             'mot_de_passe' => 'required|min:6|confirmed',
@@ -60,17 +22,24 @@ class AuthController extends Controller
             'type' => 'required|in:passager,conducteur'
         ]);
         
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Erreur de validation',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        
         // Créer l'utilisateur
         $user = Utilisateur::create([
-            'nom' => $data['nom'],
-            'email' => $data['email'],
-            'mot_de_passe' => $data['mot_de_passe'],
-            'telephone' => $data['telephone'],
-            'type' => $data['type']
+            'nom' => $request->nom,
+            'email' => $request->email,
+            'mot_de_passe' => $request->mot_de_passe, 
+            'telephone' => $request->telephone ?? null,
+            'type' => $request->type
         ]);
         
         // Créer le profil spécifique
-        if ($data['type'] === 'passager') {
+        if ($request->type === 'passager') {
             Passager::create(['utilisateur_id' => $user->id]);
         } else {
             Conducteur::create([
@@ -79,20 +48,80 @@ class AuthController extends Controller
             ]);
         }
         
-        Auth::login($user);
+        // Créer le token
+        $token = $user->createToken('auth_token')->plainTextToken;
         
-        // Rediriger selon le rôle
-        if ($user->isConducteur()) {
-            return redirect()->route('conducteur.dashboard');
-        }
-        
-        return redirect()->route('passager.dashboard');
+        // Retourner la réponse JSON
+        return response()->json([
+            'message' => 'Inscription réussie',
+            'user' => [
+                'id' => $user->id,
+                'nom' => $user->nom,
+                'email' => $user->email,
+                'telephone' => $user->telephone,
+                'type' => $user->type,
+                'created_at' => $user->created_at
+            ],
+            'token' => $token
+        ], 201);
     }
     
-    // Déconnexion
-    public function logout()
+   public function login(Request $request)
+{
+    // 1️⃣ Validate les données entrantes
+    $request->validate([
+        'email' => 'required|email',
+        'mot_de_passe' => 'required|string'
+    ]);
+
+    // 2️⃣ Chercher l'utilisateur selon l'email
+    $user = Utilisateur::where('email', $request->email)->first();
+
+    // 3️⃣ Vérifier si l'utilisateur existe et si le mot de passe est correct
+    if (!$user) {
+        return response()->json([
+            'message' => 'Email ou mot de passe incorrect'
+        ], 401);
+    }
+
+    if (!Hash::check($request->mot_de_passe, $user->mot_de_passe)) {
+        return response()->json([
+            'message' => 'Email ou mot de passe incorrect'
+        ], 401);
+    }
+
+    // 4️⃣ Supprimer tous les tokens précédents pour sécurité
+    $user->tokens()->delete();
+
+    // 5️⃣ Créer un nouveau token
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    // 6️⃣ Retourner la réponse
+    return response()->json([
+        'message' => 'Connexion réussie',
+        'user' => [
+            'id' => $user->id,
+            'nom' => $user->nom,
+            'email' => $user->email,
+            'type' => $user->type
+        ],
+        'token' => $token
+    ], 200);
+}
+    // API Logout
+    public function logout(Request $request)
     {
-        Auth::logout();
-        return redirect()->route('accueil');
+        // Supprimer le token actuel
+        $request->user()->currentAccessToken()->delete();
+        
+        return response()->json([
+            'message' => 'Déconnexion réussie'
+        ]);
+    }
+    
+    // API Me
+    public function me(Request $request)
+    {
+        return response()->json($request->user());
     }
 }

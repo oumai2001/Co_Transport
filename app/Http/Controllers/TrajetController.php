@@ -4,148 +4,131 @@ namespace App\Http\Controllers;
 
 use App\Models\Trajet;
 use App\Models\Ville;
-use App\Models\Vehicule;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class TrajetController extends Controller
 {
-    // Liste des trajets (public)
+    // Liste des trajets (API)
     public function index(Request $request)
     {
         $query = Trajet::with(['villeDepart', 'villeArrivee', 'conducteur.utilisateur'])
                       ->where('date_depart', '>', now())
                       ->where('places_disponibles', '>', 0)
                       ->where('statut', 'programmé');
-        
+
         // Filtres
         if ($request->depart) {
             $query->where('ville_depart_id', $request->depart);
         }
-        
+
         if ($request->arrivee) {
             $query->where('ville_arrivee_id', $request->arrivee);
         }
-        
+
         if ($request->date) {
             $query->whereDate('date_depart', $request->date);
         }
-        
+
         $trajets = $query->orderBy('date_depart')->paginate(10);
-        $villes = Ville::all();
-        
-        return view('trajets.index', compact('trajets', 'villes'));
+
+        // Retourner JSON pour l'API
+        return response()->json($trajets);
     }
-    
-    // Détail d'un trajet
-    public function show(Trajet $trajet)
+
+    // Détail d'un trajet (API)
+    public function show($id)
     {
-        $trajet->load(['villeDepart', 'villeArrivee', 'conducteur.utilisateur', 'vehicule']);
-        
-        return view('trajets.show', compact('trajet'));
+        $trajet = Trajet::with(['villeDepart', 'villeArrivee', 'conducteur.utilisateur', 'vehicule'])
+                        ->findOrFail($id);
+
+        return response()->json($trajet);
     }
-    
-    // Formulaire de création (conducteur)
-    public function create()
-    {
-        $villes = Ville::all();
-        $vehicules = Auth::user()->conducteur->vehicules;
-        
-        return view('trajets.create', compact('villes', 'vehicules'));
-    }
-    
-    // Enregistrer un trajet
+
+    // Créer un trajet (conducteur)
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $user = $request->user();
+        
+        if ($user->type != 'conducteur') {
+            return response()->json(['message' => 'Non autorisé'], 403);
+        }
+
+        $request->validate([
             'ville_depart_id' => 'required|exists:villes,id',
             'ville_arrivee_id' => 'required|exists:villes,id|different:ville_depart_id',
             'date_depart' => 'required|date|after:now',
-            'date_arrivee' => 'nullable|date|after:date_depart',
             'prix' => 'required|numeric|min:0',
             'places_totales' => 'required|integer|min:1',
             'vehicule_id' => 'nullable|exists:vehicules,id',
-            'adresse_depart' => 'nullable|string',
-            'adresse_arrivee' => 'nullable|string',
         ]);
-        
-        $conducteur = Auth::user()->conducteur;
-        
+
+        $conducteur = $user->conducteur;
+
         $trajet = $conducteur->trajets()->create([
-            'ville_depart_id' => $data['ville_depart_id'],
-            'ville_arrivee_id' => $data['ville_arrivee_id'],
-            'adresse_depart' => $data['adresse_depart'],
-            'adresse_arrivee' => $data['adresse_arrivee'],
-            'date_depart' => $data['date_depart'],
-            'date_arrivee' => $data['date_arrivee'],
-            'prix' => $data['prix'],
-            'places_totales' => $data['places_totales'],
-            'places_disponibles' => $data['places_totales'],
-            'vehicule_id' => $data['vehicule_id'],
+            'ville_depart_id' => $request->ville_depart_id,
+            'ville_arrivee_id' => $request->ville_arrivee_id,
+            'date_depart' => $request->date_depart,
+            'prix' => $request->prix,
+            'places_totales' => $request->places_totales,
+            'places_disponibles' => $request->places_totales,
+            'vehicule_id' => $request->vehicule_id,
             'statut' => 'programmé'
         ]);
-        
-        return redirect()->route('conducteur.dashboard')
-                         ->with('success', 'Trajet créé avec succès');
+
+        return response()->json($trajet, 201);
     }
-    
-    // Modifier un trajet
-    public function edit(Trajet $trajet)
+
+    // Mes trajets (conducteur)
+    public function mesTrajets(Request $request)
     {
-        $this->authorize('update', $trajet);
+        $user = $request->user();
         
-        $villes = Ville::all();
-        $vehicules = Auth::user()->conducteur->vehicules;
-        
-        return view('trajets.edit', compact('trajet', 'villes', 'vehicules'));
+        if ($user->type != 'conducteur') {
+            return response()->json(['message' => 'Non autorisé'], 403);
+        }
+
+        $trajets = $user->conducteur->trajets()
+                                    ->with(['villeDepart', 'villeArrivee'])
+                                    ->orderBy('date_depart', 'desc')
+                                    ->get();
+
+        return response()->json($trajets);
     }
-    
+
     // Mettre à jour un trajet
-    public function update(Request $request, Trajet $trajet)
+    public function update(Request $request, $id)
     {
-        $this->authorize('update', $trajet);
-        
-        $data = $request->validate([
-            'ville_depart_id' => 'required|exists:villes,id',
-            'ville_arrivee_id' => 'required|exists:villes,id|different:ville_depart_id',
-            'date_depart' => 'required|date',
-            'prix' => 'required|numeric|min:0',
-            'places_totales' => 'required|integer|min:1',
+        $trajet = Trajet::findOrFail($id);
+        $user = $request->user();
+
+        if ($user->type != 'conducteur' || $trajet->conducteur_id != $user->conducteur->id) {
+            return response()->json(['message' => 'Non autorisé'], 403);
+        }
+
+        $request->validate([
+            'date_depart' => 'sometimes|date',
+            'prix' => 'sometimes|numeric|min:0',
+            'places_totales' => 'sometimes|integer|min:1',
         ]);
-        
-        $differencePlaces = $data['places_totales'] - $trajet->places_totales;
-        $trajet->places_disponibles += $differencePlaces;
-        
-        $trajet->update($data);
-        
-        return redirect()->route('conducteur.dashboard')
-                         ->with('success', 'Trajet modifié avec succès');
+
+        $trajet->update($request->only(['date_depart', 'prix', 'places_totales']));
+
+        return response()->json($trajet);
     }
-    
+
     // Annuler un trajet
-    public function destroy(Trajet $trajet)
+    public function destroy($id, Request $request)
     {
-        $this->authorize('delete', $trajet);
-        
+        $trajet = Trajet::findOrFail($id);
+        $user = $request->user();
+
+        if ($user->type != 'conducteur' || $trajet->conducteur_id != $user->conducteur->id) {
+            return response()->json(['message' => 'Non autorisé'], 403);
+        }
+
         $trajet->statut = 'annulé';
         $trajet->save();
-        
-        return redirect()->route('conducteur.dashboard')
-                         ->with('success', 'Trajet annulé');
-    }
-    
-    // Mettre à jour le statut
-    public function updateStatut(Request $request, Trajet $trajet)
-    {
-        $this->authorize('update', $trajet);
-        
-        $request->validate([
-            'statut' => 'required|in:programmé,en cours,terminé,annulé'
-        ]);
-        
-        $trajet->statut = $request->statut;
-        $trajet->save();
-        
-        return redirect()->back()->with('success', 'Statut mis à jour');
+
+        return response()->json(['message' => 'Trajet annulé']);
     }
 }
