@@ -33,7 +33,7 @@ class AuthController extends Controller
         $user = Utilisateur::create([
             'nom' => $request->nom,
             'email' => $request->email,
-            'mot_de_passe' => $request->mot_de_passe, 
+            'mot_de_passe' => Hash::make($request->mot_de_passe),
             'telephone' => $request->telephone ?? null,
             'type' => $request->type
         ]);
@@ -66,48 +66,41 @@ class AuthController extends Controller
         ], 201);
     }
     
-   public function login(Request $request)
-{
-    // 1️⃣ Validate les données entrantes
-    $request->validate([
-        'email' => 'required|email',
-        'mot_de_passe' => 'required|string'
-    ]);
-
-    // 2️⃣ Chercher l'utilisateur selon l'email
-    $user = Utilisateur::where('email', $request->email)->first();
-
-    // 3️⃣ Vérifier si l'utilisateur existe et si le mot de passe est correct
-    if (!$user) {
+    // API Login (sans session, seulement token)
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'mot_de_passe' => 'required'
+        ]);
+        
+        $user = Utilisateur::where('email', $request->email)->first();
+        
+        if (!$user || !Hash::check($request->mot_de_passe, $user->mot_de_passe)) {
+            return response()->json([
+                'message' => 'Email ou mot de passe incorrect'
+            ], 401);
+        }
+        
+        // Supprimer les anciens tokens (optionnel)
+        $user->tokens()->delete();
+        
+        // Créer un nouveau token
+        $token = $user->createToken('auth_token')->plainTextToken;
+        
         return response()->json([
-            'message' => 'Email ou mot de passe incorrect'
-        ], 401);
-    }
-
-    if (!Hash::check($request->mot_de_passe, $user->mot_de_passe)) {
-        return response()->json([
-            'message' => 'Email ou mot de passe incorrect'
-        ], 401);
-    }
-
-    // 4️⃣ Supprimer tous les tokens précédents pour sécurité
-    $user->tokens()->delete();
-
-    // 5️⃣ Créer un nouveau token
-    $token = $user->createToken('auth_token')->plainTextToken;
-
-    // 6️⃣ Retourner la réponse
-    return response()->json([
-        'message' => 'Connexion réussie',
-        'user' => [
-            'id' => $user->id,
-            'nom' => $user->nom,
-            'email' => $user->email,
+            'message' => 'Connexion réussie',
+            'user' => [
+                'id' => $user->id,
+                'nom' => $user->nom,
+                'email' => $user->email,
+                'type' => $user->type
+            ],
+            'token' => $token,
             'type' => $user->type
-        ],
-        'token' => $token
-    ], 200);
-}
+        ]);
+    }
+    
     // API Logout
     public function logout(Request $request)
     {
