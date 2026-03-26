@@ -10,16 +10,16 @@ class VillesSeeder extends Seeder
     public function run()
     {
         $villes = [
-            ['nom' => 'Paris', 'code_postal' => '75001', 'pays' => 'France', 'created_at' => now(), 'updated_at' => now()],
-            ['nom' => 'Lyon', 'code_postal' => '69001', 'pays' => 'France', 'created_at' => now(), 'updated_at' => now()],
-            ['nom' => 'Marseille', 'code_postal' => '13001', 'pays' => 'France', 'created_at' => now(), 'updated_at' => now()],
-            ['nom' => 'Toulouse', 'code_postal' => '31000', 'pays' => 'France', 'created_at' => now(), 'updated_at' => now()],
-            ['nom' => 'Bordeaux', 'code_postal' => '33000', 'pays' => 'France', 'created_at' => now(), 'updated_at' => now()],
-            ['nom' => 'Lille', 'code_postal' => '59000', 'pays' => 'France', 'created_at' => now(), 'updated_at' => now()],
-            ['nom' => 'Nice', 'code_postal' => '06000', 'pays' => 'France', 'created_at' => now(), 'updated_at' => now()],
-            ['nom' => 'Nantes', 'code_postal' => '44000', 'pays' => 'France', 'created_at' => now(), 'updated_at' => now()],
-            ['nom' => 'Strasbourg', 'code_postal' => '67000', 'pays' => 'France', 'created_at' => now(), 'updated_at' => now()],
-            ['nom' => 'Montpellier', 'code_postal' => '34000', 'pays' => 'France', 'created_at' => now(), 'updated_at' => now()],
+            ['nom' => 'Casablanca', 'code_postal' => '20000', 'pays' => 'Maroc', 'created_at' => now(), 'updated_at' => now()],
+            ['nom' => 'Rabat', 'code_postal' => '10000', 'pays' => 'Maroc', 'created_at' => now(), 'updated_at' => now()],
+            ['nom' => 'Marrakech', 'code_postal' => '40000', 'pays' => 'Maroc', 'created_at' => now(), 'updated_at' => now()],
+            ['nom' => 'Fès', 'code_postal' => '30000', 'pays' => 'Maroc', 'created_at' => now(), 'updated_at' => now()],
+            ['nom' => 'Tanger', 'code_postal' => '90000', 'pays' => 'Maroc', 'created_at' => now(), 'updated_at' => now()],
+            ['nom' => 'Agadir', 'code_postal' => '80000', 'pays' => 'Maroc', 'created_at' => now(), 'updated_at' => now()],
+            ['nom' => 'Meknès', 'code_postal' => '50000', 'pays' => 'Maroc', 'created_at' => now(), 'updated_at' => now()],
+            ['nom' => 'Oujda', 'code_postal' => '60000', 'pays' => 'Maroc', 'created_at' => now(), 'updated_at' => now()],
+            ['nom' => 'Tétouan', 'code_postal' => '93000', 'pays' => 'Maroc', 'created_at' => now(), 'updated_at' => now()],
+            ['nom' => 'El Jadida', 'code_postal' => '24000', 'pays' => 'Maroc', 'created_at' => now(), 'updated_at' => now()],
         ];
         
         DB::table('villes')->insert($villes);
