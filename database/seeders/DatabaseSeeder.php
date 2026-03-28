@@ -10,9 +10,12 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             VillesSeeder::class,
-            PassagersSeeder::class,
-            ConducteursSeeder::class,
-            AdminsSeeder::class,
+            UtilisateursSeeder::class,  // ← NOUVEAU : crée utilisateurs + passagers/conducteurs/admins
+            VehiculesSeeder::class,
+            TrajetsSeeder::class,
+            ReservationsSeeder::class,
+            PaiementsSeeder::class,
+            AvisSeeder::class,
         ]);
     }
 }
