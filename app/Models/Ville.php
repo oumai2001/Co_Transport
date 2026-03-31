@@ -1,27 +1,28 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Trajet;
 
 class Ville extends Model
 {
     protected $table = 'villes';
-    protected $fillable = ['nom', 'codePostal', 'pays'];
-    
-    // Attributs
-    private $id;
-    private $nom;
-    private $codePostal;
-    private $pays;
-    
-    // Relations
+
+    protected $fillable = [
+        'nom',
+        'code_postal',
+        'pays'
+    ];
+
+    // relations
     public function trajetsDepart()
     {
-        return $this->hasMany(Trajet::class, 'villeDepart_id');
+        return $this->hasMany(Trajet::class, 'ville_depart_id');
     }
-    
+
     public function trajetsArrivee()
     {
-        return $this->hasMany(Trajet::class, 'villeArrivee_id');
+        return $this->hasMany(Trajet::class, 'ville_arrivee_id');
     }
 }
