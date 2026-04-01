@@ -1,77 +1,68 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Conducteur;
+use App\Models\Vehicule;
+use App\Models\Ville;
+use App\Models\Reservation;
 
 class Trajet extends Model
 {
     protected $table = 'trajets';
+
     protected $fillable = [
-        'conducteur_id', 'vehicule_id', 'villeDepart_id', 'villeArrivee_id',
-        'dateDepart', 'dateArrivee', 'prix', 'placesDisponibles', 'status'
+        'conducteur_id',
+        'vehicule_id',
+        'ville_depart_id',
+        'ville_arrivee_id',
+        'date_depart',
+        'date_arrivee',
+        'prix',
+        'places_disponibles',
+        'statut'
     ];
-    
-    // Attributs conformes au diagramme
-    private $id;
-    private $dateDepart;
-    private $dateArrivee;
-    private $prix;
-    private $status; // enum: programmé, en cours, terminé, annulé
-    private $placesDisponibles;
-    
-    // Relations
+
+    protected $casts = [
+        'date_depart' => 'datetime',
+        'date_arrivee' => 'datetime',
+    ];
+
+    // relations
     public function conducteur()
     {
         return $this->belongsTo(Conducteur::class, 'conducteur_id');
     }
-    
+
     public function vehicule()
     {
-        return $this->belongsTo(Vehicule::class);
+        return $this->belongsTo(Vehicule::class, 'vehicule_id');
     }
-    
+
     public function villeDepart()
     {
-        return $this->belongsTo(Ville::class, 'villeDepart_id');
+        return $this->belongsTo(Ville::class, 'ville_depart_id');
     }
-    
+
     public function villeArrivee()
     {
-        return $this->belongsTo(Ville::class, 'villeArrivee_id');
+        return $this->belongsTo(Ville::class, 'ville_arrivee_id');
     }
-    
+
     public function reservations()
     {
-        return $this->hasMany(Reservation::class);
+        return $this->hasMany(Reservation::class, 'trajet_id');
     }
-    
-    // Méthodes du diagramme
-    public static function creerTrajet($data)
+
+    // helpers
+    public function estAnnule()
     {
-        $trajet = new self();
-        $trajet->fill($data);
-        $trajet->save();
-        return [$trajet];
+        return $this->statut === 'annule';
     }
-    
-    public function modifierTrajet($data)
+
+    public function estTermine()
     {
-        $this->update($data);
-        return true;
-    }
-    
-    public function annulerTrajet()
-    {
-        $this->status = 'annulé';
-        $this->save();
-        
-        // Annuler toutes les réservations associées
-        foreach($this->reservations as $reservation) {
-            if($reservation->statut === 'confirmée') {
-                $reservation->annulerReservation();
-            }
-        }
-        
-        return true;
+        return $this->statut === 'termine';
     }
 }
