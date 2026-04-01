@@ -1,68 +1,47 @@
 <?php
 namespace App\Models;
 
-class Passager extends Utilisateur
+use Illuminate\Database\Eloquent\Model;
+
+class Passager extends Model
 {
     protected $table = 'passagers';
-    
-    // Attribut privé (- dans le diagramme)
-    private $pointsFidelite;
-    
-    public function __construct()
+
+    protected $fillable = [
+        'utilisateur_id',
+        'est_bloque'
+    ];
+
+    // Relation avec Utilisateur
+    public function utilisateur()
     {
-        $this->pointsFidelite = 0;
+        return $this->belongsTo(Utilisateur::class);
     }
-    
-    public function getPointsFidelite()
+
+    // Accesseurs pour les champs de l'utilisateur
+    public function getNomAttribute()
     {
-        return $this->pointsFidelite;
+        return $this->utilisateur->nom ?? null;
     }
-    
-    public function setPointsFidelite($points)
+
+    public function getEmailAttribute()
     {
-        $this->pointsFidelite = $points;
+        return $this->utilisateur->email ?? null;
     }
-    
-    public function reserverPlace($trajetId, $nombrePlaces)
+
+    public function getTelephoneAttribute()
     {
-        $reservation = new Reservation();
-        $reservation->passager_id = $this->id;
-        $reservation->trajet_id = $trajetId;
-        $reservation->nombrePlaces = $nombrePlaces;
-        $reservation->dateReservation = date('Y-m-d H:i:s');
-        $reservation->statut = 'en attente';
-        $reservation->prixTotal = $nombrePlaces * Trajet::find($trajetId)->prix;
-        $reservation->save();
-        
-        return $reservation;
+        return $this->utilisateur->telephone ?? null;
     }
-    
-    public function annulerReservation($reservationId)
+
+    // Relations
+    public function reservations()
     {
-        $reservation = Reservation::find($reservationId);
-        return $reservation->annulerReservation();
+        return $this->hasMany(Reservation::class, 'passager_id');
     }
-    
-    public function consulterHistorique()
+
+    public function favoris()
     {
-        return Reservation::where('passager_id', $this->id)
-                         ->orderBy('dateReservation', 'desc')
-                         ->get();
-    }
-    
-    public function noterConducteur($conducteurId, $note)
-    {
-        $conducteur = Conducteur::find($conducteurId);
-        // Logique de notation
-        return true;
-    }
-    
-    public function ajouterAuxFavoris($conducteurId)
-    {
-        $favori = new Favori();
-        $favori->passager_id = $this->id;
-        $favori->conducteur_id = $conducteurId;
-        $favori->dateAjout = date('Y-m-d H:i:s');
-        return $favori->save();
+        return $this->hasMany(Favori::class, 'passager_id');
     }
 }
