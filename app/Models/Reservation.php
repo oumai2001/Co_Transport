@@ -1,79 +1,49 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Passager;
+use App\Models\Trajet;
+use App\Models\Paiement;
 
 class Reservation extends Model
 {
     protected $table = 'reservations';
+
     protected $fillable = [
-        'passager_id', 'trajet_id', 'dateReservation', 
-        'nombrePlaces', 'statut', 'prixTotal'
+        'passager_id',
+        'trajet_id',
+        'date_reservation',
+        'nombre_places',
+        'statut',
+        'prix_total'
     ];
-    
-    // Attributs
-    private $id;
-    private $dateReservation;
-    private $nombrePlaces;
-    private $statut; // enum: confirmée, en attente, annulée
-    private $prixTotal;
-    
-    // Relations
+
+    // relations
     public function passager()
     {
         return $this->belongsTo(Passager::class, 'passager_id');
     }
-    
+
     public function trajet()
     {
-        return $this->belongsTo(Trajet::class);
+        return $this->belongsTo(Trajet::class, 'trajet_id');
     }
-    
+
     public function paiement()
     {
         return $this->hasOne(Paiement::class);
     }
-    
-    // Méthodes du diagramme
-    public function confirmerReservation()
+
+    // helpers
+    public function estConfirmee()
     {
-        if($this->trajet->placesDisponibles >= $this->nombrePlaces) {
-            $this->statut = 'confirmée';
-            $this->save();
-            
-            // Réduire les places disponibles
-            $this->trajet->placesDisponibles -= $this->nombrePlaces;
-            $this->trajet->save();
-            
-            // Créer le paiement associé
-            $paiement = new Paiement();
-            $paiement->reservation_id = $this->id;
-            $paiement->montant = $this->prixTotal;
-            $paiement->datePaiement = date('Y-m-d H:i:s');
-            $paiement->statut = 'en attente';
-            $paiement->save();
-            
-            return true;
-        }
-        return false;
+        return $this->statut === 'confirmee';
     }
-    
-    public function annulerReservation()
+
+    public function estAnnulee()
     {
-        if($this->statut === 'confirmée') {
-            // Remettre les places disponibles
-            $this->trajet->placesDisponibles += $this->nombrePlaces;
-            $this->trajet->save();
-        }
-        
-        $this->statut = 'annulée';
-        $this->save();
-        
-        // Rembourser si paiement effectué
-        if($this->paiement && $this->paiement->statut === 'payé') {
-            $this->paiement->rembourser();
-        }
-        
-        return true;
+        return $this->statut === 'annulee';
     }
 }
