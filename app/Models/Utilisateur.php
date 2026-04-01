@@ -1,32 +1,44 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Hash;
 
-abstract class Utilisateur extends Model
+class Utilisateur extends Model
 {
     protected $table = 'utilisateurs';
-    protected $fillable = ['nom', 'email', 'motDePasse', 'telephone'];
-    protected $hidden = ['motDePasse'];
-    
-    // Attributs protégés (# dans le diagramme)
-    protected $id;
-    protected $nom;
-    protected $email;
-    protected $motDePasse;
-    protected $telephone;
-    
-    public function sAuthentifier($email, $password)
+
+    protected $fillable = [
+        'nom',
+        'email',
+        'password',
+        'telephone'
+    ];
+
+    protected $hidden = [
+        'password'
+    ];
+
+    // relations (optional)
+    public function passager()
     {
-        if ($this->email === $email && $this->motDePasse === md5($password)) {
-            return true;
-        }
-        return false;
+        return $this->hasOne(Passager::class);
     }
-    
-    public function modifierProfil($data)
+
+    public function conducteur()
     {
-        $this->update($data);
-        return true;
+        return $this->hasOne(Conducteur::class);
+    }
+
+    public function admin()
+    {
+        return $this->hasOne(Admin::class);
+    }
+
+    // helper (optional only)
+    public function verifierMotDePasse($password)
+    {
+        return Hash::check($password, $this->password);
     }
 }
