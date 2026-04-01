@@ -1,47 +1,43 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Conducteur;
+use App\Models\Trajet;
 
 class Vehicule extends Model
 {
     protected $table = 'vehicules';
-    protected $fillable = ['immatriculation', 'modele', 'marque', 'capacite', 'statut', 'conducteur_id'];
-    
-    // Attributs
-    private $id;
-    private $immatriculation;
-    private $modele;
-    private $marque;
-    private $capacite;
-    private $statut; // enum: disponible, maintenance, en trajet
-    
-    // Relation
+
+    protected $fillable = [
+        'immatriculation',
+        'modele',
+        'marque',
+        'capacite',
+        'statut',
+        'conducteur_id'
+    ];
+
+    // relations
     public function conducteur()
     {
         return $this->belongsTo(Conducteur::class, 'conducteur_id');
     }
-    
+
     public function trajets()
     {
-        return $this->hasMany(Trajet::class);
+        return $this->hasMany(Trajet::class, 'vehicule_id');
     }
-    
-    // Méthodes
-    public function ajouterVehicule($data)
+
+    // helpers
+    public function estDisponible()
     {
-        $vehicule = new self();
-        $vehicule->fill($data);
-        return $vehicule->save();
+        return $this->statut === 'disponible';
     }
-    
-    public function modifierVehicule($data)
+
+    public function enMaintenance()
     {
-        return $this->update($data);
-    }
-    
-    public function supprimerVehicule()
-    {
-        return $this->delete();
+        return $this->statut === 'maintenance';
     }
 }
