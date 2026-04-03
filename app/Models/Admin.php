@@ -1,45 +1,35 @@
 <?php
 namespace App\Models;
 
-class Admin extends Utilisateur
+use Illuminate\Database\Eloquent\Model;
+
+class Admin extends Model
 {
     protected $table = 'admins';
-    
-    // Attribut privé
-    private $niveauAcces;
-    
-    public function getNiveauAcces()
+
+    protected $fillable = [
+        'utilisateur_id',
+    ];
+
+    // Relation avec Utilisateur
+    public function utilisateur()
     {
-        return $this->niveauAcces;
+        return $this->belongsTo(Utilisateur::class);
     }
-    
-    public function setNiveauAcces($niveau)
+
+    // Accesseurs pour les champs de l'utilisateur
+    public function getNomAttribute()
     {
-        $this->niveauAcces = $niveau;
+        return $this->utilisateur->nom ?? null;
     }
-    
-    public function gererUtilisateurs()
+
+    public function getEmailAttribute()
     {
-        return true;
+        return $this->utilisateur->email ?? null;
     }
-    
-    public function gererVehicules()
+
+    public function getTelephoneAttribute()
     {
-        return true;
-    }
-    
-    public function gererTrajets()
-    {
-        return true;
-    }
-    
-    public function gererReservations()
-    {
-        return true;
-    }
-    
-    public function consulterStatistiques()
-    {
-        return true;
+        return $this->utilisateur->telephone ?? null;
     }
 }
