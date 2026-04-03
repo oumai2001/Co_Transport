@@ -1,41 +1,47 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Reservation;
 
 class Paiement extends Model
 {
     protected $table = 'paiements';
-    protected $fillable = ['reservation_id', 'montant', 'datePaiement', 'modePaiement', 'statut'];
-    
-    // Attributs
-    private $id;
-    private $montant;
-    private $datePaiement;
-    private $modePaiement; // enum: carte, espéces
-    private $statut; // enum: payé, remboursé, en attente
-    
-    // Relation
+
+    protected $fillable = [
+        'reservation_id',
+        'montant',
+        'date_paiement',
+        'mode_paiement',
+        'statut'
+    ];
+
+    protected $casts = [
+        'date_paiement' => 'datetime'
+    ];
+
+    // relation
     public function reservation()
     {
         return $this->belongsTo(Reservation::class);
     }
-    
-    // Méthodes
-    public function effectuerPaiement()
+
+    // helpers
+    public function marquerCommePaye()
     {
-        $this->statut = 'payé';
+        $this->statut = 'paye';
         return $this->save();
     }
-    
+
     public function rembourser()
     {
-        $this->statut = 'remboursé';
+        $this->statut = 'rembourse';
         return $this->save();
     }
-    
-    public function verifierPaiement()
+
+    public function estPaye()
     {
-        return $this->statut === 'payé';
+        return $this->statut === 'paye';
     }
 }
