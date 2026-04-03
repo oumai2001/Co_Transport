@@ -1,65 +1,90 @@
 <?php
 namespace App\Models;
 
-class Conducteur extends Utilisateur
+use Illuminate\Database\Eloquent\Model;
+use App\Models\Reservation;
+
+class Conducteur extends Model
 {
     protected $table = 'conducteurs';
-    
-    // Attributs privés (- dans le diagramme)
-    private $numeroPermis;
-    private $noteMoyenne;
-    
-    // Getters/Setters
-    public function getNumeroPermis()
+
+    protected $fillable = [
+        'utilisateur_id',
+        'numero_permis',
+        'note_moyenne',
+        'est_bloque'
+    ];
+
+    // Relation avec Utilisateur
+    public function utilisateur()
     {
-        return $this->numeroPermis;
+        return $this->belongsTo(Utilisateur::class);
     }
-    
-    public function setNumeroPermis($numeroPermis)
+
+    // Accesseurs pour les champs de l'utilisateur (délégués)
+    public function getNomAttribute()
     {
-        $this->numeroPermis = $numeroPermis;
+        return $this->utilisateur->nom ?? null;
     }
-    
-    public function getNoteMoyenne()
+
+    public function getEmailAttribute()
     {
-        return $this->noteMoyenne;
+        return $this->utilisateur->email ?? null;
     }
-    
-    public function proposerTrajet($data)
+
+    public function getTelephoneAttribute()
     {
-        $trajet = new Trajet();
-        $trajet->conducteur_id = $this->id;
-        $trajet->vehicule_id = $data['vehicule_id'];
-        $trajet->villeDepart_id = $data['villeDepart_id'];
-        $trajet->villeArrivee_id = $data['villeArrivee_id'];
-        $trajet->dateDepart = $data['dateDepart'];
-        $trajet->dateArrivee = $data['dateArrivee'];
-        $trajet->prix = $data['prix'];
-        $trajet->placesDisponibles = $data['placesDisponibles'];
-        $trajet->status = 'programmé';
-        $trajet->save();
-        
-        return $trajet;
+        return $this->utilisateur->telephone ?? null;
     }
-    
-    public function consulterMesTrajets()
+
+    // Relations
+    public function vehicules()
     {
-        return Trajet::where('conducteur_id', $this->id)->get();
+        return $this->hasMany(Vehicule::class, 'conducteur_id');
     }
-    
-    public function mettreAJourStatut($trajetId, $nouveauStatut)
+
+    public function trajets()
     {
-        $trajet = Trajet::find($trajetId);
-        $trajet->status = $nouveauStatut;
-        return $trajet->save();
+        return $this->hasMany(Trajet::class, 'conducteur_id');
     }
-    
-    public function voirPassagers($trajetId)
+
+    public function avisRecus()
     {
-        $trajet = Trajet::find($trajetId);
-        return $trajet->reservations()
-                      ->where('statut', 'confirmée')
-                      ->with('passager')
-                      ->get();
+        return $this->hasMany(Avis::class, 'conducteur_id');
+    }
+
+    public function favoris()
+    {
+        return $this->hasMany(Favori::class, 'conducteur_id');
+    }
+
+    public function reservations()
+    {
+        return $this->hasManyThrough(
+            Reservation::class,
+            Trajet::class,
+            'conducteur_id',
+            'trajet_id'
+        );
+    }
+
+    // Accessors / Calculs
+    public function getNombreTrajetsAttribute()
+    {
+        return $this->trajets()->count();
+    }
+
+    public function getNombrePassagersAttribute()
+    {
+        return Reservation::whereHas('trajet', function ($q) {
+            $q->where('conducteur_id', $this->id);
+        })->where('statut', 'confirmee')->count();
+    }
+
+    public function getGainsTotauxAttribute()
+    {
+        return Reservation::whereHas('trajet', function ($q) {
+            $q->where('conducteur_id', $this->id);
+        })->where('statut', 'confirmee')->sum('prix_total');
     }
 }
