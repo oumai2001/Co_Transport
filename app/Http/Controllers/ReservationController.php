@@ -12,9 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class ReservationController extends Controller
 {
-    /* =========================
-        RÉSERVER 
-    ========================= */
+    //RÉSERVER 
     public function reserver($trajet_id)
     {
         $passagerId = session('role_id');
@@ -70,9 +68,7 @@ class ReservationController extends Controller
         }
     }
 
-    /* =========================
-        RÉSERVATION MULTIPLE PLACES
-    ========================= */
+    //RÉSERVATION MULTIPLE PLACES
     public function confirmer(Request $request, $trajet_id)
     {
         $passagerId = session('role_id');
@@ -132,9 +128,7 @@ class ReservationController extends Controller
         }
     }
 
-    /* =========================
-        ANNULER RÉSERVATION
-    ========================= */
+    // ANNULER RÉSERVATION
     public function annuler($id)
     {
         $passagerId = session('role_id');
@@ -180,9 +174,7 @@ class ReservationController extends Controller
         }
     }
 
-    /* =========================
-        HISTORIQUE DES RÉSERVATIONS
-    ========================= */
+    //HISTORIQUE DES RÉSERVATIONS
     public function historique()
     {
         $passagerId = session('role_id');
@@ -205,9 +197,7 @@ class ReservationController extends Controller
         return view('passager.historique', compact('reservations'));
     }
 
-    /* =========================
-        NOTER LE CONDUCTEUR 
-    ========================= */
+    //NOTER LE CONDUCTEUR 
     public function noterConducteur(Request $request, $id)
     {
         $passagerId = session('role_id');
@@ -261,9 +251,7 @@ class ReservationController extends Controller
         }
     }
 
-    /* =========================
-        MODIFIER UN AVIS 
-    ========================= */
+    //MODIFIER UN AVIS 
     public function modifierAvis(Request $request, $reservationId)
     {
         $passagerId = session('role_id');
@@ -305,9 +293,7 @@ class ReservationController extends Controller
         }
     }
 
-    /* =========================
-        MISE À JOUR DE LA NOTE DU CONDUCTEUR
-    ========================= */
+    // MISE À JOUR DE LA NOTE DU CONDUCTEUR
     private function updateConducteurNote($conducteurId)
     {
         $moyenne = Avis::where('conducteur_id', $conducteurId)->avg('note');

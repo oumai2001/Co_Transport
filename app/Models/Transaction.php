@@ -29,7 +29,6 @@ class Transaction extends Model
         return $this->belongsTo(Paiement::class);
     }
 
-    // helpers
     public function estComplete()
     {
         return $this->statut === 'complete';

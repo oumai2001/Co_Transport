@@ -29,8 +29,7 @@ class Vehicule extends Model
     {
         return $this->hasMany(Trajet::class, 'vehicule_id');
     }
-
-    // helpers
+    
     public function estDisponible()
     {
         return $this->statut === 'disponible';

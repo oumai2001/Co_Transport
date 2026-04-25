@@ -8,9 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class VehiculeController extends Controller
 {
-    /**
-     * Liste des véhicules du conducteur
-     */
+    //Liste des véhicules du conducteur
     public function index()
     {
         $conducteurId = session('role_id');
@@ -27,9 +25,7 @@ class VehiculeController extends Controller
         return view('conducteur.vehicules', compact('vehicules'));
     }
 
-    /**
-     * Ajouter un véhicule
-     */
+    //Ajouter un véhicule
     public function store(Request $request)
     {
         $conducteurId = session('role_id');
@@ -68,9 +64,7 @@ class VehiculeController extends Controller
         }
     }
 
-    /**
-     * Supprimer un véhicule
-     */
+    //Supprimer un véhicule
     public function destroy($id)
     {
         $conducteurId = session('role_id');
@@ -91,9 +85,7 @@ class VehiculeController extends Controller
         ]);
     }
 
-    /**
-     * Mettre à jour le statut uniquement (AJAX)
-     */
+    // Mettre à jour le statut uniquement
     public function updateStatut(Request $request, $id)
     {
         $conducteurId = session('role_id');

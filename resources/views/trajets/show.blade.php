@@ -24,7 +24,6 @@
                 </div>
             </div>
 
-            <!-- CONDUCTEUR + BOUTON FAVORIS -->
             <div class="border rounded-lg p-3 md:p-4">
                 <h3 class="font-bold mb-2 text-sm md:text-base">Conducteur</h3>
                 <div class="flex items-center space-x-3">
@@ -37,7 +36,6 @@
                     </div>
                 </div>
 
-                <!-- BOUTON FAVORIS -->
                 @if(session('user_role') == 'passager')
                     @php
                         $passagerId = session('role_id');
@@ -83,7 +81,6 @@
                 </div>
             </div>
 
-            <!-- BOUTON RÉSERVATION + INDICATEUR DE RÉSERVATION EXISTANTE -->
             @if(session('user_role') == 'passager')
                 @if($dejaReserve)
                     @if($reservationExistante->statut == 'en_attente')

@@ -8,9 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class VilleController extends Controller
 {
-    /**
-     * Liste des villes (Admin)
-     */
+    //Liste des villes 
     public function index()
     {
         $userRole = session('user_role');
@@ -24,9 +22,7 @@ class VilleController extends Controller
         return view('admin.villes', compact('villes'));
     }
 
-    /**
-     * Recherche de villes  - Autocomplete
-     */
+    // Recherche de villes
     public function rechercheJSON(Request $request)
     {
         $q = $request->get('q');
@@ -54,9 +50,7 @@ class VilleController extends Controller
         return response()->json($villes);
     }
 
-    /**
-     * Ajouter une ville (Admin)
-     */
+    //Ajouter une ville 
     public function store(Request $request)
     {
         $userRole = session('user_role');
@@ -90,9 +84,7 @@ class VilleController extends Controller
         }
     }
 
-    /**
-     * Modifier une ville (Admin)
-     */
+    //Modifier une ville 
     public function update(Request $request, $id)
     {
         $userRole = session('user_role');
@@ -128,9 +120,7 @@ class VilleController extends Controller
         }
     }
 
-    /**
-     * Supprimer une ville (Admin)
-     */
+    // Supprimer une ville
     public function destroy($id)
     {
         $userRole = session('user_role');
@@ -168,9 +158,8 @@ class VilleController extends Controller
         }
     }
 
-    /**
-     * Obtenir toutes les villes pour formulaire 
-     */
+    // Obtenir toutes les villes pour formulaire 
+     
     public function getAll()
     {
         $villes = Ville::orderBy('nom')->get(['id', 'nom', 'code_postal', 'pays']);

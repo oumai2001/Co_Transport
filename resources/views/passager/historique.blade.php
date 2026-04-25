@@ -4,7 +4,6 @@
 <div class="bg-white rounded-lg shadow-md p-4 md:p-6">
     <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6">Historique des reservations</h2>
     
-    <!-- Filtres -->
     <div class="mb-6 flex flex-col sm:flex-row gap-3">
         <select id="filtreStatut" class="px-3 py-2 border rounded-lg text-sm" onchange="filtrerHistorique()">
             <option value="all">Tous les statuts</option>
@@ -211,7 +210,7 @@ function afficherMessage(message, type) {
     setTimeout(() => { msgDiv.style.opacity = '0'; setTimeout(() => msgDiv.remove(), 300); }, 3000);
 }
 
-// ========== ANNULATION ==========
+// ANNULATION
 function ouvrirModalAnnulation(id) {
     document.getElementById('annulationReservationId').value = id;
     document.getElementById('modalAnnulation').classList.remove('hidden');
@@ -241,7 +240,7 @@ function confirmerAnnulation() {
     .catch(() => afficherMessage('Erreur de connexion', 'error'));
 }
 
-// ========== NOTATION ==========
+//NOTATION
 document.querySelectorAll('.etoile').forEach(etoile => {
     etoile.addEventListener('click', function() {
         noteSelectionnee = parseInt(this.dataset.note);

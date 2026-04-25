@@ -29,12 +29,12 @@ class CreateTrajetsTable extends Migration
             $table->decimal('prix', 10, 2);
 
            $table->enum('statut', [
-    'en_attente',   // Nouveau trajet en attente de validation
-    'programme',    // Trajet validé et visible
-    'en_cours',     // Trajet en cours
-    'termine',      // Trajet terminé
-    'annule',       // Trajet annulé
-    'refuse'        // Trajet refusé par l'admin
+    'en_attente',  
+    'programme',    
+    'en_cours',     
+    'termine',     
+    'annule',      
+    'refuse'       
 ])->default('en_attente');
 
             $table->integer('places_disponibles');

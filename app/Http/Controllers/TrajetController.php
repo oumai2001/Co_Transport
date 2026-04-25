@@ -11,9 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class TrajetController extends Controller
 {
-    /* =========================
-        LISTE DES TRAJETS
-    ========================= */
+    // LISTE DES TRAJETS
 public function index(Request $request)
 {
     $villes = Ville::orderBy('nom')->get();
@@ -29,7 +27,7 @@ public function index(Request $request)
             'vehicule'
         ]);
 
-    // ⭐ Filtre par conducteur (AJOUTÉ)
+    // Filtre par conducteur 
     if ($request->filled('conducteur_id')) {
         $query->where('conducteur_id', $request->conducteur_id);
     }
@@ -64,9 +62,7 @@ public function index(Request $request)
 
     return view('trajets.index', compact('trajets', 'villes'));
 }
-    /* =========================
-        FILTRER TRAJETS 
-    ========================= */
+    //FILTRER TRAJETS 
     public function filtrer(Request $request)
     {
         $query = Trajet::where('statut', 'programme')
@@ -97,9 +93,7 @@ public function index(Request $request)
         return view('trajets.index', compact('trajets', 'villes'));
     }
 
-    /* =========================
-        DÉTAILS D'UN TRAJET
-    ========================= */
+    // DÉTAILS D'UN TRAJET
     public function show($id)
     {
         $trajet = Trajet::with([
@@ -131,9 +125,7 @@ public function index(Request $request)
         ));
     }
 
-    /* =========================
-        FORMULAIRE CRÉATION TRAJET
-    ========================= */
+    // FORMULAIRE CRÉATION TRAJET
     public function create()
     {
         $conducteurId = session('role_id');
@@ -157,9 +149,7 @@ public function index(Request $request)
         return view('conducteur.creer-trajet', compact('vehicules', 'villes'));
     }
 
-    /* =========================
-        ENREGISTRER TRAJET
-    ========================= */
+    //ENREGISTRER TRAJET
     public function store(Request $request)
     {
         $conducteurId = session('role_id');
@@ -205,9 +195,7 @@ public function index(Request $request)
         }
     }
 
-    /* =========================
-        MES TRAJETS (CONDUCTEUR)
-    ========================= */
+    //MES TRAJETS 
     public function mesTrajets()
     {
         $conducteurId = session('role_id');
@@ -225,9 +213,7 @@ public function index(Request $request)
         return view('conducteur.mes-trajets', compact('trajets'));
     }
 
-    /* =========================
-        MODIFIER TRAJET 
-    ========================= */
+    //MODIFIER TRAJET 
     public function edit($id)
     {
         $conducteurId = session('role_id');
@@ -251,9 +237,7 @@ public function index(Request $request)
         return view('conducteur.modifier-trajet', compact('trajet', 'vehicules', 'villes'));
     }
 
-    /* =========================
-        METTRE À JOUR TRAJET
-    ========================= */
+    //METTRE À JOUR TRAJET
     public function update(Request $request, $id)
     {
         $conducteurId = session('role_id');
@@ -303,9 +287,7 @@ public function index(Request $request)
         }
     }
 
-    /* =========================
-        SUPPRIMER TRAJET
-    ========================= */
+    //SUPPRIMER TRAJET
     public function destroy($id)
     {
         $userRole = session('user_role');
@@ -322,9 +304,7 @@ public function index(Request $request)
         return back()->with('success', 'Trajet supprimé avec succès');
     }
 
-    /* =========================
-        PASSAGERS D'UN TRAJET
-    ========================= */
+    // PASSAGERS D'UN TRAJET
 public function voirPassagers($id)
 {
     $conducteurId = session('role_id');
@@ -351,9 +331,7 @@ public function voirPassagers($id)
     return view('conducteur.passagers', compact('trajet', 'reservations'));
 }
 
-    /* =========================
-        METTRE À JOUR STATUT (AJAX)
-    ========================= */
+    // METTRE À JOUR STATUT 
     public function mettreAJourStatut(Request $request, $id)
     {
         $conducteurId = session('role_id');
@@ -382,9 +360,7 @@ public function voirPassagers($id)
         ]);
     }
 
-    /* =========================
-        RECHERCHE JSON (AJAX)
-    ========================= */
+    // RECHERCHE 
     public function rechercheJSON(Request $request)
     {
         $query = Trajet::where('statut', 'programme')

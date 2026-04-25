@@ -9,9 +9,7 @@ use Illuminate\Http\Request;
 
 class AvisController extends Controller
 {
-    /* =========================
-       AFFICHER AVIS D'UN CONDUCTEUR
-    ========================== */
+    //AFFICHER AVIS D'UN CONDUCTEUR
     public function index($conducteurId)
     {
         $conducteur = Conducteur::with('utilisateur')->findOrFail($conducteurId);
@@ -36,9 +34,7 @@ class AvisController extends Controller
         return view('avis.index', compact('conducteur', 'avis', 'stats'));
     }
 
-    /* =========================
-       AJOUTER UN AVIS (via reservation)
-    ========================== */
+    // AJOUTER UN AVIS 
     public function store(Request $request, $id)
     {
         $passagerId = session('role_id');
@@ -98,9 +94,7 @@ class AvisController extends Controller
         return back()->with('success', 'Merci pour votre avis !');
     }
 
-    /* =========================
-       MODIFIER UN AVIS (via reservation)
-    ========================== */
+    //MODIFIER UN AVIS 
     public function modifierAvis(Request $request, $reservationId)
     {
         $passagerId = session('role_id');
@@ -142,9 +136,7 @@ class AvisController extends Controller
         return back()->with('success', 'Avis modifié avec succès');
     }
 
-    /* =========================
-       MES AVIS (CONDUCTEUR)
-    ========================== */
+    // MES AVIS (CONDUCTEUR)
     public function mesAvisConducteur()
     {
         $conducteurId = session('role_id');
@@ -173,9 +165,7 @@ class AvisController extends Controller
         return view('conducteur.mes-avis', compact('avis', 'avisStats'));
     }
 
-    /* =========================
-       UPDATE NOTE CONDUCTEUR
-    ========================== */
+    //UPDATE NOTE CONDUCTEUR
     private function updateConducteurNote($conducteurId)
     {
         $moyenne = Avis::where('conducteur_id', $conducteurId)->avg('note');

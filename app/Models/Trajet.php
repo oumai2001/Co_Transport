@@ -54,8 +54,7 @@ class Trajet extends Model
     {
         return $this->hasMany(Reservation::class, 'trajet_id');
     }
-
-    // helpers
+    
     public function estAnnule()
     {
         return $this->statut === 'annule';

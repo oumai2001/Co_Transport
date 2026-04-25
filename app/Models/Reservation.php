@@ -36,7 +36,6 @@ class Reservation extends Model
         return $this->hasOne(Paiement::class);
     }
 
-    // helpers
     public function estConfirmee()
     {
         return $this->statut === 'confirmee';

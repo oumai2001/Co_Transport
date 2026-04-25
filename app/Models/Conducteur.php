@@ -21,7 +21,7 @@ class Conducteur extends Model
         return $this->belongsTo(Utilisateur::class);
     }
 
-    // Accesseurs pour les champs de l'utilisateur (délégués)
+    // Accesseurs pour les champs de l'utilisateur
     public function getNomAttribute()
     {
         return $this->utilisateur->nom ?? null;
@@ -68,7 +68,6 @@ class Conducteur extends Model
         );
     }
 
-    // Accessors / Calculs
     public function getNombreTrajetsAttribute()
     {
         return $this->trajets()->count();

@@ -2,7 +2,7 @@
 
 @section('content')
 
-<!-- Background global (full page) -->
+<!-- Background global  -->
 <div class="fixed inset-0 -z-10">
     <img src="{{ asset('images/image.png') }}"
          class="w-full h-full object-cover" />

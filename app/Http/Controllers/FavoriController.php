@@ -8,9 +8,7 @@ use Illuminate\Http\Request;
 
 class FavoriController extends Controller
 {
-    /**
-     * Afficher la liste des favoris du passager
-     */
+    // Afficher la liste des favoris du passager
     public function index()
     {
         $passagerId = session('role_id');
@@ -30,9 +28,7 @@ class FavoriController extends Controller
         return view('passager.favoris', compact('favoris'));
     }
 
-    /**
-     * Ajouter un conducteur aux favoris
-     */
+    // Ajouter un conducteur aux favoris
  public function ajouter($id)
 {
     $passagerId = session('role_id');
@@ -85,9 +81,7 @@ public function supprimerParConducteur($conducteurId)
 }
 
 
-    /**
-     * Supprimer un favori par son ID
-     */
+    // Supprimer un favori par son ID
        public function supprimer($id)
 {
     $passagerId = session('role_id');

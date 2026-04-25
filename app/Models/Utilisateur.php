@@ -20,7 +20,7 @@ class Utilisateur extends Model
         'password'
     ];
 
-    // relations (optional)
+    // relations
     public function passager()
     {
         return $this->hasOne(Passager::class);
@@ -36,7 +36,6 @@ class Utilisateur extends Model
         return $this->hasOne(Admin::class);
     }
 
-    // helper (optional only)
     public function verifierMotDePasse($password)
     {
         return Hash::check($password, $this->password);

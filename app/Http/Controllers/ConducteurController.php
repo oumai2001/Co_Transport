@@ -14,11 +14,8 @@ use App\Models\Utilisateur;
 
 class ConducteurController extends Controller
 {
-    /*
-    |-------------------------
-    | DASHBOARD
-    |-------------------------
-    */
+    //DASHBOARD
+
     public function dashboard()
     {
         $conducteurId = session('role_id');
@@ -75,11 +72,7 @@ class ConducteurController extends Controller
         ));
     }
 
-    /*
-    |-------------------------
-    | CREER TRAJET
-    |-------------------------
-    */
+    // CREER TRAJET
     public function creerTrajet()
     {
         $conducteurId = session('role_id');
@@ -102,11 +95,7 @@ class ConducteurController extends Controller
         return view('conducteur.creer-trajet', compact('vehicules', 'villes'));
     }
 
-    /*
-    |-------------------------
-    | STORE TRAJET
-    |-------------------------
-    */
+    // STORE TRAJET
     public function storeTrajet(Request $request)
     {
         $conducteurId = session('role_id');
@@ -145,11 +134,7 @@ class ConducteurController extends Controller
             ->with('success', 'Trajet créé avec succès');
     }
 
-    /*
-    |-------------------------
-    | MES TRAJETS
-    |-------------------------
-    */
+    // MES TRAJETS
     public function mesTrajets()
     {
         $conducteurId = session('role_id');
@@ -166,11 +151,8 @@ class ConducteurController extends Controller
         return view('conducteur.mes-trajets', compact('trajets'));
     }
 
-    /*
-    |-------------------------
-    | MODIFIER TRAJET (FORMULAIRE)
-    |-------------------------
-    */
+    // MODIFIER TRAJET
+   
     public function edit($id)
     {
         $conducteurId = session('role_id');
@@ -185,11 +167,7 @@ class ConducteurController extends Controller
         return view('conducteur.modifier-trajet', compact('trajet', 'vehicules', 'villes'));
     }
 
-    /*
-    |-------------------------
-    | UPDATE TRAJET
-    |-------------------------
-    */
+    // UPDATE TRAJET
     public function update(Request $request, $id)
     {
         $conducteurId = session('role_id');
@@ -220,11 +198,8 @@ class ConducteurController extends Controller
             ->with('success', 'Trajet modifié avec succès');
     }
 
-    /*
-    |-------------------------
-    | SUPPRIMER TRAJET
-    |-------------------------
-    */
+    // SUPPRIMER TRAJET
+    
     public function destroy($id)
     {
         $conducteurId = session('role_id');
@@ -241,11 +216,7 @@ class ConducteurController extends Controller
             ->with('success', 'Trajet supprimé avec succès');
     }
 
-    /*
-    |-------------------------
-    | PASSAGERS D'UN TRAJET
-    |-------------------------
-    */
+    // PASSAGERS D'UN TRAJET
     public function voirPassagers($id)
     {
         $conducteurId = session('role_id');
@@ -260,11 +231,7 @@ class ConducteurController extends Controller
         return view('conducteur.passagers', compact('trajet', 'reservations'));
     }
 
-    /*
-    |-------------------------
-    | METTRE À JOUR STATUT TRAJET
-    |-------------------------
-    */
+    // METTRE À JOUR STATUT TRAJET
     public function mettreAJourStatut(Request $request, $id)
     {
         $conducteurId = session('role_id');
@@ -286,11 +253,7 @@ class ConducteurController extends Controller
         ]);
     }
 
-    /*
-    |-------------------------
-    | VEHICULES
-    |-------------------------
-    */
+    // VEHICULES
     public function index()
     {
         $conducteurId = session('role_id');
@@ -304,11 +267,8 @@ class ConducteurController extends Controller
         return view('conducteur.vehicules', compact('vehicules'));
     }
 
-    /*
-    |-------------------------
-    | AJOUTER VEHICULE
-    |-------------------------
-    */
+    // AJOUTER VEHICULE
+    
     public function store(Request $request)
     {
         $conducteurId = session('role_id');
@@ -336,11 +296,7 @@ class ConducteurController extends Controller
         return back()->with('success', 'Véhicule ajouté avec succès');
     }
 
-    /*
-    |-------------------------
-    | SUPPRIMER VEHICULE
-    |-------------------------
-    */
+    // SUPPRIMER VEHICULE
     public function destroyVehicule($id)
     {
         $conducteurId = session('role_id');
@@ -357,11 +313,7 @@ class ConducteurController extends Controller
         ]);
     }
 
-    /*
-    |-------------------------
-    | PROFIL
-    |-------------------------
-    */
+    // PROFIL
     public function profil()
     {
         $conducteurId = session('role_id');
@@ -371,11 +323,7 @@ class ConducteurController extends Controller
         return view('conducteur.profil', compact('conducteur'));
     }
 
-    /*
-    |-------------------------
-    | MODIFIER PROFIL
-    |-------------------------
-    */
+    // MODIFIER PROFIL
     public function modifierProfil(Request $request)
     {
         $conducteurId = session('role_id');

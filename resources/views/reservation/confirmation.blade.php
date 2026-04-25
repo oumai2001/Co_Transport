@@ -3,7 +3,6 @@
 @section('content')
 <div class="max-w-2xl mx-auto px-4 sm:px-6 ">
     <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-        <!-- En-tête avec dégradé -->
         <div class="bg-gradient-to-r px-6 py-4">
             <h2 class="text-2xl font-bold text-black">Confirmation de réservation</h2>
             <p class="text-blue-600 text-sm mt-1">Vérifiez les informations et choisissez le nombre de places</p>

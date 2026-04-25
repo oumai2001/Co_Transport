@@ -3,7 +3,6 @@
 @section('content')
 <div class="max-w-2xl mx-auto px-4 sm:px-6">
     <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-        <!-- En-tête avec dégradé + bouton retour -->
         <div class="bg-gradient-to-r px-6 py-4">
             <div class="flex items-center justify-between">
                 <a href="{{ url()->previous() }}" class="text-blue-600 hover:text-blue-800 transition flex items-center space-x-1">

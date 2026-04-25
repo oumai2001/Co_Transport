@@ -18,11 +18,6 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PointFideliteController;
 use App\Http\Controllers\ConducteurController;
 
-/*
-|--------------------------------------------------------------------------
-| Routes Publiques
-|--------------------------------------------------------------------------
-*/
 
 Route::get('/', fn() => view('accueil'))->name('accueil');
 
@@ -42,15 +37,12 @@ Route::get('/trajet/{id}', [TrajetController::class, 'show'])->name('trajet.show
 Route::get('/api/trajets/recherche', [TrajetController::class, 'rechercheJSON'])->name('api.trajets.recherche');
 Route::get('/api/villes/recherche', [VilleController::class, 'rechercheJSON'])->name('api.villes.recherche');
 
-/*
-|--------------------------------------------------------------------------
-| Routes PROTÉGÉES
-|--------------------------------------------------------------------------
-*/
+//Routes PROTÉGÉES
+
 
 Route::middleware('web')->group(function () {
 
-    // Profil (Tous rôles)
+    // Profil
     Route::get('/profil', [ProfilController::class, 'show'])->name('profil.show');
     Route::get('/profil/edit', [ProfilController::class, 'edit'])->name('profil.edit');
     Route::put('/profil', [ProfilController::class, 'update'])->name('profil.update');
@@ -59,13 +51,6 @@ Route::middleware('web')->group(function () {
     // Dashboards
     Route::get('/passager/dashboard', [DashboardController::class, 'passagerDashboard'])->name('passager.dashboard');
     Route::get('/conducteur/dashboard', [DashboardController::class, 'conducteurDashboard'])->name('conducteur.dashboard');
-
-    // Notifications
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::get('/notifications/unread/count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unread.count');
-    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
-    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
-    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
 
     // Avis
     Route::get('/avis/conducteur/{id}', [AvisController::class, 'index'])->name('avis.conducteur');
@@ -77,18 +62,10 @@ Route::middleware('web')->group(function () {
     Route::post('/paiement/{reservation_id}/effectuer', [PaiementController::class, 'effectuer'])->name('paiement.effectuer');
     Route::get('/paiement/historique', [PaiementController::class, 'historique'])->name('paiement.historique');
 
-    // Points de fidélité
-    Route::get('/passager/points', [PointFideliteController::class, 'index'])->name('passager.points');
-
-    // Favoris - CORRIGÉ : Utilisez POST au lieu de DELETE
-    // Route::post('/favori/ajouter/{conducteurId}', [FavoriController::class, 'ajouter'])->name('favori.ajouter');
-    // Route::post('/favori/retirer/{conducteurId}', [FavoriController::class, 'supprimerParConducteur'])->name('favori.retirer');
-    
+    // Favoris 
     Route::post('/favori/ajouter/{id}', [FavoriController::class, 'ajouter'])->name('favori.ajouter');
-Route::delete('/favori/retirer/{conducteurId}', [FavoriController::class, 'supprimerParConducteur'])->name('favori.retirer');
-Route::post('/favori/supprimer/{id}', [FavoriController::class, 'supprimer'])->name('favori.supprimer');
-
-// Dans la section des routes protégées, ajoutez :
+    Route::delete('/favori/retirer/{conducteurId}', [FavoriController::class, 'supprimerParConducteur'])->name('favori.retirer');
+    Route::post('/favori/supprimer/{id}', [FavoriController::class, 'supprimer'])->name('favori.supprimer');
 
     // Passager
     Route::get('/passager/historique', [ReservationController::class, 'historique'])->name('passager.historique');
@@ -134,7 +111,6 @@ Route::post('/favori/supprimer/{id}', [FavoriController::class, 'supprimer'])->n
         Route::delete('/conducteur/{id}', [AdminController::class, 'supprimerConducteur'])->name('conducteur.supprimer');
         Route::get('/trajets', [AdminController::class, 'gererTrajets'])->name('trajets');
         Route::post('/trajet/{id}/valider', [AdminController::class, 'validerTrajet'])->name('trajet.valider');
-        // ⚠️ Route DELETE pour admin - URL différente de celle du conducteur
         Route::delete('/admin/trajet/{id}', [AdminController::class, 'supprimerTrajet'])->name('trajet.supprimer');
         Route::get('/vehicules', [AdminController::class, 'gererVehicules'])->name('vehicules');
         Route::delete('/vehicule/{id}', [AdminController::class, 'supprimerVehicule'])->name('vehicule.supprimer');
@@ -150,7 +126,6 @@ Route::post('/favori/supprimer/{id}', [FavoriController::class, 'supprimer'])->n
     });
     
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout.get');
-// Routes pour le profil (dans le groupe middleware('web'))
 Route::get('/profil/modifier', [ProfilController::class, 'edit'])->name('profil.modifier');
 Route::post('/profil/modifier', [ProfilController::class, 'update'])->name('profil.modifier.post');
 

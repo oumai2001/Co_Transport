@@ -9,7 +9,7 @@
         </button>
     </div>
     
-    <!-- Version Desktop: tableau -->
+    <!-- Version Desktop -->
     <div class="overflow-x-auto -mx-4 md:mx-0 hidden md:block">
         <table class="min-w-[700px] md:min-w-full w-full">
             <thead class="bg-gray-50">
@@ -63,7 +63,7 @@
         </table>
     </div>
 
-    <!-- Version Mobile: cartes -->
+    <!-- Version Mobile-->
     <div class="md:hidden space-y-4" id="conducteursMobileList">
         @foreach($conducteurs as $conducteur)
             <div class="border rounded-lg p-4 bg-white shadow-sm" id="conducteur-mobile-{{ $conducteur->id }}">

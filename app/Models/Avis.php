@@ -41,9 +41,6 @@ class Avis extends Model
         return $this->belongsTo(Conducteur::class, 'conducteur_id');
     }
 
-   
-
-
     public function scopeNote($query, $note)
     {
         return $query->where('note', $note);

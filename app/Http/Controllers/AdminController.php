@@ -114,7 +114,7 @@ class AdminController extends Controller
         return view('admin.conducteurs', compact('conducteurs'));
     }
     
-    // AJOUTER PASSAGER (JSON)
+    // AJOUTER PASSAGER
     public function ajouterPassager(Request $request)
     {
         $request->validate([
@@ -159,7 +159,7 @@ class AdminController extends Controller
         }
     }
     
-    // AJOUTER CONDUCTEUR (JSON)
+    // AJOUTER CONDUCTEUR 
     public function ajouterConducteur(Request $request)
     {
         $request->validate([
@@ -206,7 +206,7 @@ class AdminController extends Controller
         }
     }
     
-    // BLOQUER/DÉBLOQUER PASSAGER (JSON)
+    // BLOQUER/DÉBLOQUER PASSAGER
     public function bloquerPassager($id)
     {
         $passager = Passager::findOrFail($id);
@@ -219,7 +219,7 @@ class AdminController extends Controller
         ]);
     }
     
-    // BLOQUER/DÉBLOQUER CONDUCTEUR (JSON)
+    // BLOQUER/DÉBLOQUER CONDUCTEUR 
     public function bloquerConducteur($id)
     {
         $conducteur = Conducteur::findOrFail($id);
@@ -232,7 +232,7 @@ class AdminController extends Controller
         ]);
     }
     
-    // SUPPRIMER PASSAGER (JSON)
+    // SUPPRIMER PASSAGER 
     public function supprimerPassager($id)
     {
         $passager = Passager::findOrFail($id);
@@ -245,7 +245,7 @@ class AdminController extends Controller
         return response()->json(['success' => true, 'message' => ' Passager supprimé']);
     }
     
-    // SUPPRIMER CONDUCTEUR (JSON)
+    // SUPPRIMER CONDUCTEUR
     public function supprimerConducteur($id)
     {
         $conducteur = Conducteur::findOrFail($id);

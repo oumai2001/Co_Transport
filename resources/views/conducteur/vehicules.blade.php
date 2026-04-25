@@ -155,7 +155,7 @@
 <script>
 let currentVehiculeId = null;
 
-// ========== MODIFIER ==========
+// MODIFIER
 function openEditModal(id, currentStatut) {
     currentVehiculeId = id;
     document.getElementById('edit_vehicule_id').value = id;
@@ -207,7 +207,7 @@ function confirmEdit() {
     .catch(() => alert('Erreur de connexion'));
 }
 
-// ========== SUPPRIMER ==========
+// SUPPRIMER
 function openDeleteModal(id, nom) {
     currentVehiculeId = id;
     document.getElementById('delete_vehicule_id').value = id;

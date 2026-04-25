@@ -27,7 +27,6 @@ class Paiement extends Model
         return $this->belongsTo(Reservation::class);
     }
 
-    // helpers
     public function marquerCommePaye()
     {
         $this->statut = 'paye';

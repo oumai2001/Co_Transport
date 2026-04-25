@@ -14,9 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class StatistiqueController extends Controller
 {
-    // =========================
     // ADMIN STATISTICS
-    // =========================
     public function index()
     {
         $userRole = session('user_role');
@@ -75,10 +73,7 @@ class StatistiqueController extends Controller
             'chart_revenues'
         ));
     }
-
-    // =========================
     // CONDUCTEUR STATISTICS
-    // =========================
     public function conducteurStats()
     {
         $conducteurId = session('role_id');

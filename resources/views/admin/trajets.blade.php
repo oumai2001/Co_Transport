@@ -60,7 +60,7 @@
         </table>
     </div>
 
-    <!-- Version Mobile: cartes -->
+    <!-- Version Mobile -->
     <div class="md:hidden space-y-4" id="trajetsMobileList">
         @foreach($trajetsTries as $trajet)
             <div class="border rounded-lg p-4 bg-white shadow-sm" id="trajet-mobile-{{ $trajet->id }}">

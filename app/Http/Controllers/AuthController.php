@@ -74,7 +74,6 @@ class AuthController extends Controller
             return back()->with('error', 'Rôle non défini pour cet utilisateur');
         }
 
-        // Session Laravel
         session([
             'user_id' => $utilisateur->id,
             'role_id' => $user->id,

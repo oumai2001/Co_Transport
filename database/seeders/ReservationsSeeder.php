@@ -72,7 +72,7 @@ class ReservationsSeeder extends Seeder
             ],
             [
                 'passager_id' => 7, // Nadia
-                'trajet_id' => 7, // Trajet terminé
+                'trajet_id' => 7, 
                 'nombre_places' => 1,
                 'prix_total' => 60,
                 'statut' => 'confirmee',

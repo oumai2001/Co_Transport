@@ -57,7 +57,6 @@
     </div>
 </div>
 
-<!-- 🔴 MODAL -->
 <div id="confirmModal" style="
     position: fixed;
     top:0; left:0;
@@ -91,7 +90,6 @@
     </div>
 </div>
 
-<!-- 🔔 TOAST -->
 <div id="toast" style="
     position: fixed;
     top: 80px;
@@ -109,18 +107,15 @@
 <script>
 let currentId = null;
 
-// 🔴 ouvrir modal
 function openModal(id) {
     currentId = id;
     document.getElementById('confirmModal').style.display = "flex";
 }
 
-// ❌ fermer modal
 function closeModal() {
     document.getElementById('confirmModal').style.display = "none";
 }
 
-// 🔥 confirmer suppression
 function confirmDelete() {
     fetch('/favori/supprimer/' + currentId, {
         method: 'POST',
@@ -146,7 +141,6 @@ function confirmDelete() {
     });
 }
 
-// 🔔 toast
 function showToast(message, success = true) {
     const toast = document.getElementById('toast');
     const msg = document.getElementById('toast-message');

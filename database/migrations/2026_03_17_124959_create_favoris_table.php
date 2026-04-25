@@ -23,7 +23,6 @@ class CreateFavorisTable extends Migration
 
             $table->timestamps();
 
-            // Un passager ne peut ajouter un conducteur qu'une seule fois
             $table->unique(['passager_id', 'conducteur_id']);
         });
     }

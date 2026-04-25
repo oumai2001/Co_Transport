@@ -14,9 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class PassagerController extends Controller
 {
-    /**
-     * Dashboard passager
-     */
+    // Dashboard passager
     public function dashboard()
     {
         $passagerId = session('role_id');
@@ -68,9 +66,7 @@ class PassagerController extends Controller
         ));
     }
     
-    /**
-     * Historique complet des réservations
-     */
+    //Historique complet des réservations
     public function historique()
     {
         $passagerId = session('role_id');
@@ -89,9 +85,8 @@ class PassagerController extends Controller
         return view('passager.historique', compact('reservations'));
     }
     
-    /**
-     * Liste des favoris
-     */
+    //Liste des favoris
+     
     public function favoris()
     {
         $passagerId = session('role_id');
@@ -106,9 +101,7 @@ class PassagerController extends Controller
         return view('passager.favoris', compact('favoris'));
     }
     
-    /**
-     * Profil du passager
-     */
+    // Profil du passager
     public function profil()
     {
         $passagerId = session('role_id');
@@ -118,9 +111,7 @@ class PassagerController extends Controller
         return view('passager.profil', compact('passager'));
     }
     
-    /**
-     * Modifier le profil
-     */
+    // Modifier le profil
     public function modifierProfil(Request $request)
     {
         $passagerId = session('role_id');

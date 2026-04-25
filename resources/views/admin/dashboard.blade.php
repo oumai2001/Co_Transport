@@ -5,7 +5,7 @@
 <!-- CONTENT -->
 <div class="md:col-span-4 space-y-6">
 
-    <!-- Cartes Statistiques principales - Desktop -->
+    <!-- Statistiques principales - Desktop -->
     <div class="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl shadow-lg p-5 text-white">
             <div class="flex justify-between items-start">

@@ -24,7 +24,7 @@ class DashboardController extends Controller
         // Récupérer le passager avec son utilisateur
         $passager = Passager::with('utilisateur')->findOrFail($passagerId);
 
-        //  STATS
+        
         $stats = [
             'total_reservations' => Reservation::where('passager_id', $passagerId)->count(),
             'reservations_confirmees' => Reservation::where('passager_id', $passagerId)
@@ -33,7 +33,7 @@ class DashboardController extends Controller
                 ->where('statut', 'confirmee')->sum('prix_total') ?? 0,
         ];
 
-        // Prochains trajets (réservations confirmées à venir)
+        // Prochains trajets 
         $prochains_trajets = Reservation::where('passager_id', $passagerId)
             ->where('statut', 'confirmee')
             ->whereHas('trajet', function($q) {
@@ -77,7 +77,7 @@ class DashboardController extends Controller
         // Récupérer le conducteur avec son utilisateur
         $conducteur = Conducteur::with('utilisateur')->findOrFail($conducteurId);
 
-        //  STATS
+     
         $stats = [
             'total_trajets' => Trajet::where('conducteur_id', $conducteurId)->count(),
             'total_passagers' => Reservation::whereHas('trajet', function ($q) use ($conducteurId) {
