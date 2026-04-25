@@ -64,24 +64,21 @@
                                 <span class="font-semibold text-sm">{{ $reservation->nombre_places }}</span>
                             </div>
                             <div class="flex flex-wrap gap-3">
-                                @if($reservation->statut == 'confirmee' && strtotime($reservation->trajet->date_depart) > time())
-                                    <button onclick="ouvrirModalAnnulation({{ $reservation->id }})" class="text-red-600 hover:underline text-xs md:text-sm">Annuler</button>
-                                @endif
-                                
-                                @if($reservation->trajet->statut == 'termine')
-                                    @if($avisExistant)
-                                        <button onclick="ouvrirModalModifierAvis({{ $reservation->id }}, {{ $reservation->trajet->conducteur_id }}, {{ $avisExistant->note }}, '{{ addslashes($avisExistant->commentaire) }}')" 
-                                                class="text-blue-600 hover:underline text-xs md:text-sm">
-                                            Modifier mon avis
-                                        </button>
-                                    @else
-                                        <button onclick="ouvrirModalNote({{ $reservation->id }}, {{ $reservation->trajet->conducteur_id }})" 
-                                                class="text-yellow-600 hover:underline text-xs md:text-sm">
-                                            Noter
-                                        </button>
-                                    @endif
-                                @endif
-                                
+                             @if($reservation->statut == 'confirmee' && strtotime($reservation->trajet->date_depart) > time() && $reservation->trajet->statut != 'termine')
+                                <button onclick="ouvrirModalAnnulation({{ $reservation->id }})" class="text-red-600 hover:underline text-xs md:text-sm">Annuler</button>
+                            @endif
+                                                            
+                              @if($avisExistant)
+                                <button onclick="ouvrirModalModifierAvis({{ $reservation->id }}, {{ $reservation->trajet->conducteur_id }}, {{ $avisExistant->note }}, '{{ addslashes($avisExistant->commentaire) }}')" 
+                                        class="text-blue-600 hover:underline text-xs md:text-sm">
+                                    Modifier mon avis
+                                </button>
+                            @elseif($reservation->trajet->statut == 'termine')
+                                <button onclick="ouvrirModalNote({{ $reservation->id }}, {{ $reservation->trajet->conducteur_id }})" 
+                                        class="text-yellow-600 hover:underline text-xs md:text-sm">
+                                    Noter
+                                </button>
+                            @endif
                                 <a href="/trajet/{{ $reservation->trajet_id }}" class="text-blue-600 hover:underline text-xs md:text-sm">Details</a>
                             </div>
                         </div>

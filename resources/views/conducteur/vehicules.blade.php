@@ -187,8 +187,8 @@ function confirmEdit() {
     const nouveauStatut = selectedRadio.value;
     const id = document.getElementById('edit_vehicule_id').value;
     
-    fetch(`/conducteur/vehicule/${id}`, {
-        method: 'PUT',
+    fetch(`/conducteur/vehicule/${id}/statut`, {
+        method: 'POST',  // ← CHANGER DE PUT À POST
         headers: {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -201,12 +201,11 @@ function confirmEdit() {
             closeEditModal();
             location.reload();
         } else {
-            alert('Erreur lors de la modification');
+            alert(data.error || 'Erreur lors de la modification');
         }
     })
     .catch(() => alert('Erreur de connexion'));
 }
-
 // SUPPRIMER
 function openDeleteModal(id, nom) {
     currentVehiculeId = id;

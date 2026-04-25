@@ -11,10 +11,10 @@
       
         <div class="relative px-8 py-12 md:py-16 text-center">
             
-            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
-                CoTransport
-            </h1>
-            <p class="text-lg md:text-xl font-bold text-white mb-8 max-w-2xl mx-auto">
+           <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight bg-gray-900/30 px-6 py-2 rounded-lg inline-block">
+    CoTransport
+</h1>
+            <p class="text-lg md:text-xl font-bold text-white mb-8 max-w-2xl mx-auto bg-gray-900/30 px-6 py-2 rounded-lg">
                 La solution simple, économique et écologique pour partager vos trajets
             </p>
             
